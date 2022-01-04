@@ -25,13 +25,11 @@ namespace Dapper.Infrastructure.Repositories
 
             var sql = "Insert into Products (Name,Description,Barcode,Rate,AddedOn) VALUES (@Name,@Description,@Barcode,@Rate,@AddedOn)";
 
-            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
-            {
-                connection.Open();
+            using var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
+            connection.Open();
+            var result = await connection.ExecuteAsync(sql, entity);
+            return result;
 
-                var result = await connection.ExecuteAsync(sql, entity);
-                return result;
-            }
         }
 
         public async Task<int> DeleteAsync(int id)

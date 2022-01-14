@@ -13,9 +13,11 @@ namespace Dapper.Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly IConfiguration configuration;
+        private IDb<Product> _db;
 
-        public ProductRepository(IConfiguration configuration)
+        public ProductRepository(IConfiguration configuration,IDb<Product> db)
         {
+            _db = db;
             this.configuration = configuration;
         }
 
@@ -23,11 +25,9 @@ namespace Dapper.Infrastructure.Repositories
         {
             entity.AddedOn = DateTime.Now;
 
-            var sql = "Insert into Products (Name,Description,Barcode,Rate,AddedOn) VALUES (@Name,@Description,@Barcode,@Rate,@AddedOn)";
+            var sql = "Insert into Products (Name,Description,Barcode,Rate,AddedOn,ModifiedOn) VALUES (@Name,@Description,@Barcode,@Rate,@AddedOn,@ModifiedOn)";
 
-            using var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection"));
-            connection.Open();
-            var result = await connection.ExecuteAsync(sql, entity);
+            var result = await _db.ExecuteAsync(sql, entity);
             return result;
 
         }
@@ -47,13 +47,9 @@ namespace Dapper.Infrastructure.Repositories
         public async Task<IReadOnlyList<Product>> GetAllAsync()
         {
             var sql = "SELECT * FROM Products";
+            var result = await _db.SelectAsync(sql);
+            return result.ToList();
 
-            using (var connection = new SqlConnection(configuration.GetConnectionString("DefaultConnection")))
-            {
-                var result = await connection.QueryAsync<Product>(sql);
-
-                return result.ToList();
-            }
         }
 
         public async Task<Product> GetByIdAsync(int id)

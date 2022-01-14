@@ -1,10 +1,12 @@
 using Dapper.Core.Interfaces;
 using Dapper.Infrastructure;
+using Dapper.Infrastructure.DbContexts;
 using Dapper.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +34,8 @@ namespace Dapper.Api
 
             services.AddControllers();
             services.AddInfrastructure();
+            services.AddDbContext<DapperDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dapper.Api", Version = "v1" });

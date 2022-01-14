@@ -1,11 +1,7 @@
-﻿using Dapper.Core.Interfaces;
+﻿using Dapper.Core.Entities;
+using Dapper.Core.Interfaces;
 using Dapper.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dapper.Infrastructure
 {
@@ -15,6 +11,7 @@ namespace Dapper.Infrastructure
         {
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IDb<Product>, Db<Product>>();
         }
     }
 }
